@@ -27,6 +27,17 @@
 #include <opencv2/core/core.hpp>
 #include <DepthSense.hxx>
 
+
+#include <stdio.h>  /* defines FILENAME_MAX */
+#define WINDOWS
+#ifdef WINDOWS
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+#else
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+#endif
+
 using namespace cv;
 using namespace std;
 using namespace DepthSense;

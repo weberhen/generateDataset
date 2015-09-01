@@ -1,8 +1,10 @@
 #include "DS325.h"
 
+using namespace std;
+
 int main (int argc, char** argv)
 {
-   g_context = Context::create("localhost");
+	g_context = Context::create("localhost");
 
     g_context.deviceAddedEvent().connect(&onDeviceConnected);
     g_context.deviceRemovedEvent().connect(&onDeviceDisconnected);

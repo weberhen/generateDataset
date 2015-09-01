@@ -1,8 +1,16 @@
 #include <fstream> /**/
 #include <opencv2/core/core.hpp>
+#include <iostream>
 
 using namespace cv;
 using namespace std;
+
+extern string verticesFloatingPoint_str;
+extern string colorMap_str;
+extern string confidenceMap_str;
+extern string uvMap_str;
+
+string createDirs(void);
 
 template<typename T>
 void saveToFile(InputArray _s, string fileName, int cont)
@@ -31,3 +39,4 @@ void saveToFile(InputArray _s, string fileName, int cont)
 	}
 	myfile.close();
 }
+
