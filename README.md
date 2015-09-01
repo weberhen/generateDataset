@@ -1,13 +1,20 @@
 +-----------------------+
-|Hand Segmentation code |
+|    Dataset Creator    |
 +-----------------------+
 
-To run the code, it is necessary:
+Captures and saves data from a DS325 camera for 100 frames. The data being saved are:
 
-- OpenCV 2.4.9
-- DepthSenseSDK-1.5.0.1205 or higher
+- verticesFloatingPoint
+- colorMap
+- confidenceMap
+- uvMap
 
 ----------------------
+To run the code, it is necessary:
+
+- OpenCV 2.4.11
+- DepthSenseSDK-1.5.0.1205 or higher
+
 Using Visual Studio 2010 win 32
 
 There are some environment variables that must be set if the Visual Studio Project will be used, which are:
