@@ -1,6 +1,20 @@
+#pragma once
+
 #include <fstream> /**/
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include "DS325.h"
+
+#include <stdio.h>  /* defines FILENAME_MAX */
+#define WINDOWS
+#ifdef WINDOWS
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+#else
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+#endif
 
 using namespace cv;
 using namespace std;
@@ -40,3 +54,4 @@ void saveToFile(InputArray _s, string fileName, int cont)
 	myfile.close();
 }
 
+void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Mat colorMap, Mat confMap, Mat uvMap);

@@ -1,10 +1,27 @@
 #include "Utils.h"
-#include <windows.h>
+#include <Windows.h>
+#include <iomanip>      // std::setprecision
+#include "ColorNode.h"
+#include "DepthNode.hpp"
 
 string verticesFloatingPoint_str = "\\verticesFloatingPoint";
 string colorMap_str = "\\colorMap";
 string confidenceMap_str = "\\confidenceMap";
 string uvMap_str = "\\uvMap";
+
+int frameCounter=0;
+int experimentCounter = 0;
+bool s_already_pressed=false;
+bool new_experiment=true;
+
+const int nFramesPerExperiment = 30;
+
+vector <Mat> vec_verticesFloatingPointArray;
+vector <Mat> vec_colorMap;
+vector <Mat> vec_confMap;
+vector <Mat> vec_uvMap;
+
+vector<string> name_dir;
 
 std::wstring s2ws(const std::string& s)
 {
@@ -26,25 +43,99 @@ string createDirs(void)
 	CreateDirectoryW(s2ws(root_data_dir).c_str(), NULL);
 
 	string test_name;
-	cout << "Type the test name: ";
+	cout << "Enter the name of the experiment or `e` to exit: ";
+
 	cin >> test_name;
-	cout << "press `s` to start recording. " << endl;
 
-	string verticesFloatingPoint_str_ext;
-	string colorMap_str_ext;
-	string confidenceMap_str_ext;
-	string uvMap_str_ext;
+	if(test_name != "e")
+	{
+		cout << "press `s` to start recording. " << endl;
 
-	verticesFloatingPoint_str_ext = "data\\" + test_name + verticesFloatingPoint_str;
-	colorMap_str_ext = "data\\" + test_name + colorMap_str;
-	confidenceMap_str_ext = "data\\" + test_name + confidenceMap_str;
-	uvMap_str_ext = "data\\" + test_name + uvMap_str;
+		string verticesFloatingPoint_str_ext;
+		string colorMap_str_ext;
+		string confidenceMap_str_ext;
+		string uvMap_str_ext;
 
-	CreateDirectoryW(s2ws(test_name).c_str(), NULL);
-	CreateDirectoryW(s2ws(verticesFloatingPoint_str_ext).c_str(), NULL);
-	CreateDirectoryW(s2ws(colorMap_str_ext).c_str(), NULL);
-	CreateDirectoryW(s2ws(confidenceMap_str_ext).c_str(), NULL);
-	CreateDirectoryW(s2ws(uvMap_str_ext).c_str(), NULL);
+		verticesFloatingPoint_str_ext = "data\\" + test_name + verticesFloatingPoint_str;
+		colorMap_str_ext = "data\\" + test_name + colorMap_str;
+		confidenceMap_str_ext = "data\\" + test_name + confidenceMap_str;
+		uvMap_str_ext = "data\\" + test_name + uvMap_str;
+
+		CreateDirectoryW(s2ws("data\\"+test_name).c_str(), NULL);
+		CreateDirectoryW(s2ws(verticesFloatingPoint_str_ext).c_str(), NULL);
+		CreateDirectoryW(s2ws(colorMap_str_ext).c_str(), NULL);
+		CreateDirectoryW(s2ws(confidenceMap_str_ext).c_str(), NULL);
+		CreateDirectoryW(s2ws(uvMap_str_ext).c_str(), NULL);
+	}
 
 	return test_name;
+}
+
+void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Mat colorMap, Mat confMap, Mat uvMap)
+{
+	char cCurrentPath[FILENAME_MAX];
+	GetCurrentDir(cCurrentPath, sizeof(cCurrentPath));
+	string working_path(cCurrentPath);
+	working_path+=+"\\data\\";
+	
+	if(new_experiment)
+	{
+		name_dir.push_back(createDirs());
+		new_experiment = false;
+	}
+
+	imshow("dep->getDepthMapFloatingPoint()",depthMapFloatingPoint);
+	imshow("dep->getConfMap()",confMap);
+	
+	if(waitKey(1) == 's' || s_already_pressed==true)
+	{
+		if(!s_already_pressed)
+		{
+			
+			cout << "Recording..." << endl;
+		}
+		s_already_pressed = true;
+
+		vec_verticesFloatingPointArray.push_back(verticesFloatingPointArray);
+		vec_colorMap.push_back(colorMap);
+		vec_confMap.push_back(confMap);
+		vec_uvMap.push_back(uvMap);
+
+		frameCounter++;
+	}
+
+	if(frameCounter == nFramesPerExperiment)
+	{
+		cout << "Recording done." << endl;
+		frameCounter = 0;
+		s_already_pressed=false;
+		experimentCounter++;
+		new_experiment = true;
+		destroyAllWindows();
+	}
+
+	if(name_dir.back() == "e")
+	{
+		destroyAllWindows();
+
+		cout << "Recording complete." << endl;
+		cout << "Saving " << experimentCounter << "experiments to disk..." << endl;
+		
+		for(int i=0;i<experimentCounter;i++)
+		{
+			cout<<"Saving experiment `" << name_dir[i] << "`" << endl;
+			
+			for(int j=0;j<nFramesPerExperiment;j++)
+			{
+				saveToFile<float>(vec_verticesFloatingPointArray[i*nFramesPerExperiment+j], working_path+"\\"+name_dir[i]+verticesFloatingPoint_str+"\\", j);
+				saveToFile<int16_t>(vec_colorMap[i*nFramesPerExperiment+j], working_path+name_dir[i]+colorMap_str+"\\", j); 
+				saveToFile<int16_t>(vec_confMap[i*nFramesPerExperiment+j], working_path+name_dir[i]+confidenceMap_str+"\\", j); 
+				saveToFile<float>(vec_uvMap[i*nFramesPerExperiment+j], working_path+name_dir[i]+uvMap_str+"\\", j); 
+				cout<< std::setprecision(3) << ((float)j/(float)nFramesPerExperiment)*100<<"%"<<endl;
+			}
+		}
+		cout << "Saving complete." << endl;
+		Sleep(1000);
+		exit( 0 );
+	}
 }

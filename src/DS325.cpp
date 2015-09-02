@@ -8,22 +8,10 @@ uint32_t g_aFrames = 0;
 uint32_t g_cFrames = 0;
 uint32_t g_dFrames = 0;
 
-const int nFramesPerExperiment = 100;
 bool g_bDeviceFound = false;
 
 ProjectionHelper* g_pProjHelper = NULL;
 StereoCameraParameters g_scp;
-
-int frameCounter=0;
-int experimentCounter = 0;
-bool s_already_pressed=false;
-
-vector <Mat> vec_verticesFloatingPointArray;
-vector <Mat> vec_colorMap;
-vector <Mat> vec_confMap;
-vector <Mat> vec_uvMap;
-
-vector<string> name_dir;
 
 /*----------------------------------------------------------------------------*/
 // New color sample event handler
@@ -50,57 +38,12 @@ static void onNewDepthSample (DepthNode obj, DepthNode::NewSampleReceivedData da
 
 	dep->setDepthNode(data);
 
-	char cCurrentPath[FILENAME_MAX];
-	GetCurrentDir(cCurrentPath, sizeof(cCurrentPath));
-	string working_path(cCurrentPath);
-	
-	imshow("dep->getDepthMapFloatingPoint()",dep->getDepthMapFloatingPoint());
-	imshow("dep->getConfMap()",dep->getConfMap());
-	
-	if(waitKey(1) == 's' || s_already_pressed==true)
-	{
-		if(!s_already_pressed)
-		{
-			name_dir.push_back(createDirs());
-			cout << "Recording..." << endl;
-		}
-		s_already_pressed = true;
+	saveExperiment(	dep->getVerticesFloatingPointArray(), 
+					dep->getDepthMapFloatingPoint() ,
+					col->getColorMap(), 
+					dep->getConfMap(), 
+					dep->getuvMap());
 
-		vec_verticesFloatingPointArray.push_back(dep->getVerticesFloatingPointArray());
-		vec_colorMap.push_back(col->getColorMap());
-		vec_confMap.push_back(dep->getConfMap());
-		vec_uvMap.push_back(dep->getuvMap());
-
-		frameCounter++;
-	}
-	if(frameCounter == nFramesPerExperiment)
-	{
-		cout << "Recording done." << endl;
-		frameCounter = 0;
-		s_already_pressed=false;
-		experimentCounter++;
-	}
-	if(waitKey(1)=='e')
-	{
-		cout << "Recording complete." << endl;
-		cout << "Saving to disk..." << endl;
-
-		cout<<working_path+"\\"+verticesFloatingPoint_str+"\\"<<endl;
-		waitKey();
-		for(int i=0;i<experimentCounter;i++)
-		{
-			for(int j=0;j<nFramesPerExperiment;j++)
-			{
-				saveToFile<float>(vec_verticesFloatingPointArray[j], working_path+"\\"+verticesFloatingPoint_str+"\\", j);
-				saveToFile<int16_t>(vec_colorMap[j], working_path+"\\"+colorMap_str+"\\", j);
-				saveToFile<int16_t>(vec_confMap[j], working_path+"\\"+confidenceMap_str+"\\", j);
-				saveToFile<float>(vec_uvMap[j], working_path+"\\"+uvMap_str+"\\", j);
-				cout<<i<<"%"<<endl;
-			}
-		}
-		cout << "Saving complete." << endl;
-		exit( 0 );
-	}
 	
 }
 
