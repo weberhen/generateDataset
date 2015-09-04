@@ -38,7 +38,7 @@ static void onNewDepthSample (DepthNode obj, DepthNode::NewSampleReceivedData da
 
 	dep->setDepthNode(data);
 
-	saveExperiment(	dep->getVerticesFloatingPointArray(), 
+	saveExperiment(	dep->getVerticesFloatingPoint(), 
 					dep->getDepthMapFloatingPoint() ,
 					col->getColorMap(), 
 					dep->getConfMap(), 

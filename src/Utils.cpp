@@ -14,7 +14,7 @@ int experimentCounter = 0;
 bool s_already_pressed=false;
 bool new_experiment=true;
 
-const int nFramesPerExperiment = 30;
+const int nFramesPerExperiment = 10;
 
 vector <Mat> vec_verticesFloatingPointArray;
 vector <Mat> vec_colorMap;
@@ -71,8 +71,16 @@ string createDirs(void)
 	return test_name;
 }
 
-void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Mat colorMap, Mat confMap, Mat uvMap)
+void saveExperiment(Mat verticesFloatingPoint, Mat depthMapFloatingPoint,Mat colorMap, Mat confMap, Mat uvMap)
 {
+	/*cout<<verticesFloatingPointArray.size()<<endl;
+	cout<<depthMapFloatingPoint.size()<<endl;
+	cout<<uvMap.size()<<endl;
+	cout<<colorMap.size()<<endl;
+	char a;
+	cin >> a;*/
+
+
 	char cCurrentPath[FILENAME_MAX];
 	GetCurrentDir(cCurrentPath, sizeof(cCurrentPath));
 	string working_path(cCurrentPath);
@@ -87,16 +95,15 @@ void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Ma
 	imshow("dep->getDepthMapFloatingPoint()",depthMapFloatingPoint);
 	imshow("dep->getConfMap()",confMap);
 	
-	if(waitKey(1) == 's' || s_already_pressed==true)
+	if(waitKey(1) == 's' || s_already_pressed == true)
 	{
 		if(!s_already_pressed)
 		{
-			
 			cout << "Recording..." << endl;
 		}
 		s_already_pressed = true;
 
-		vec_verticesFloatingPointArray.push_back(verticesFloatingPointArray);
+		vec_verticesFloatingPointArray.push_back(verticesFloatingPoint);
 		vec_colorMap.push_back(colorMap);
 		vec_confMap.push_back(confMap);
 		vec_uvMap.push_back(uvMap);
@@ -108,7 +115,7 @@ void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Ma
 	{
 		cout << "Recording done." << endl;
 		frameCounter = 0;
-		s_already_pressed=false;
+		s_already_pressed = false;
 		experimentCounter++;
 		new_experiment = true;
 		destroyAllWindows();

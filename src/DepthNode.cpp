@@ -7,7 +7,7 @@ HandSegm::DepthNode::DepthNode(void)
 
 	verticesFloatingPoint=Mat::zeros(ROWS,COLS,CV_32F);
 
-	verticesFloatingPointArray=Mat::zeros(ROWS*COLS,3,CV_32F);
+	verticesFloatingPointArray=Mat::zeros(ROWS,COLS,CV_32F);
 
 	confidenceMap=Mat::zeros(240, 320, CV_16S);
 
@@ -56,9 +56,9 @@ void HandSegm::DepthNode::setVerticesFloatingPoint(const Pointer< DepthSense::FP
 			channels[1].at<float>(i,j)=softdata[i*COLS+j].y;
 			channels[2].at<float>(i,j)=softdata[i*COLS+j].z;
 
-			verticesFloatingPointArray.at<float>(i*COLS+j,0)=softdata[i*COLS+j].x;
+			/*verticesFloatingPointArray.at<float>(i*COLS+j,0)=softdata[i*COLS+j].x;
 			verticesFloatingPointArray.at<float>(i*COLS+j,1)=softdata[i*COLS+j].y;
-			verticesFloatingPointArray.at<float>(i*COLS+j,2)=softdata[i*COLS+j].z;
+			verticesFloatingPointArray.at<float>(i*COLS+j,2)=softdata[i*COLS+j].z;*/
 		}
 	}
 
