@@ -37,6 +37,8 @@ namespace HandSegm{
 		/*the confidence map */
 		Mat confidenceMap;
 
+		Mat RGBuvmap;
+
 		UV uv[240*320];
 
 		DepthNode(void);
@@ -54,8 +56,7 @@ namespace HandSegm{
 		Mat getVerticesFloatingPoint();
 
 		void setUvMap(DepthSense::DepthNode::NewSampleReceivedData rec_data);
-		Mat getUvMap();
-
+		
 		void setConfMap(const Pointer< int16_t > &confidence);
 
 		Mat getConfMap();
@@ -63,6 +64,10 @@ namespace HandSegm{
 		Mat getVerticesFloatingPointArray();
 
 		Mat getuvMap();
+
+		Mat getRGBuvmap();
+
+		void setRGBuvmap(Mat &uv);
 
 		~DepthNode(void)
 		{

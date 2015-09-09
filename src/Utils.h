@@ -54,4 +54,4 @@ void saveToFile(InputArray _s, string fileName, int cont)
 	myfile.close();
 }
 
-void saveExperiment(Mat verticesFloatingPointArray, Mat depthMapFloatingPoint,Mat colorMap, Mat confMap, Mat uvMap);
+void saveExperiment(Mat &verticesFloatingPoint, Mat &depthMapFloatingPoint,Mat &colorMap, Mat &confMap, Mat &uvMap, Mat &RGBuvmap);

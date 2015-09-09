@@ -38,7 +38,7 @@ string getDate()
 int main(int argc, char *argv[])
 {
 	int i=0;
-	std::string path_to_experiments = "C:\\Users\\weber\\Desktop\\dataset\\data\\uvMap\\";
+	std::string path_to_experiments = "C:\\Users\\Henrique\\Desktop\\dataset\\data\\ws_white\\RGBuvMap\\";
 	ofstream myfile;
 	cout<<path_to_experiments+"touchLocation"+"_"+getDate()+".txt"<<endl;
 	myfile.open(path_to_experiments+"touchLocation"+"_"+getDate()+".txt");

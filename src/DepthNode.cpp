@@ -11,6 +11,8 @@ HandSegm::DepthNode::DepthNode(void)
 
 	confidenceMap=Mat::zeros(240, 320, CV_16S);
 
+	RGBuvmap = Mat::zeros(ROWS,COLS,CV_8U);
+
 }
 
 bool HandSegm::DepthNode::instanceFlag = false;
@@ -26,6 +28,8 @@ void HandSegm::DepthNode::setDepthNode(DepthSense::DepthNode::NewSampleReceivedD
 	setUvMap(data);
 	
 	setConfMap(data.confidenceMap);
+
+	setRGBuvmap(getuvMap());
 
 }
 /*pass depthmap (DS325) to Mat (openCV) in millimeters*/
@@ -82,11 +86,6 @@ void HandSegm::DepthNode::setUvMap(DepthSense::DepthNode::NewSampleReceivedData 
 		}
 	}
 }
-	
-Mat HandSegm::DepthNode::getUvMap()
-{
-	return uvMap.clone();
-}
 
 void HandSegm::DepthNode::setConfMap(const Pointer< int16_t > &confidence)
 {
@@ -121,6 +120,54 @@ Mat HandSegm::DepthNode::getuvMap()
 	merge(channels,output);
 
 	return output;
+}
+
+Mat HandSegm::DepthNode::getRGBuvmap()
+{
+	return RGBuvmap.clone();
+}
+
+void HandSegm::DepthNode::setRGBuvmap(Mat &uv)
+{
+	ColorNode *c = ColorNode::getInstance();
+	Mat rgb = c->getColorMap();
+
+	vector<Mat> channelsUV(3);
+	vector<Mat> channelsRGB(3);
+	vector<Mat> channelsRGBuvmap(3);
+	split(uv,channelsUV);
+	split(rgb,channelsRGB);
+	
+	for(int i=0;i<3;i++)
+	{
+		channelsRGBuvmap[i] = Mat(ROWS,COLS,CV_8UC1);
+	}
+
+	for(int i=0;i<ROWS;i++)
+	{
+		for(int j=0;j<COLS;j++)
+		{
+			if(channelsUV[0].at<float>(i,j)>0)
+			{
+				for(int c=0;c<3;c++)
+				{
+					int u = ROWS*channelsUV[1].at<float>(i,j);
+					int v = COLS*channelsUV[0].at<float>(i,j);
+					
+					channelsRGBuvmap[c].at<uchar>(i,j) = channelsRGB[c].at<uint16_t>(u,v);
+				}
+			}
+			else
+			{
+				for(int c=0;c<3;c++)
+				{
+					channelsRGBuvmap[c].at<uchar>(i,j) = 0;
+				}
+			}
+		}
+	}
+	merge(channelsRGBuvmap,RGBuvmap);
+		
 }
 
 	

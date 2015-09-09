@@ -30,19 +30,21 @@ static void onNewColorSample (ColorNode obj, ColorNode::NewSampleReceivedData da
 static void onNewDepthSample (DepthNode obj, DepthNode::NewSampleReceivedData data){
 	
 	/******initializing singleton classes******/
-	HandSegm::DepthNode *dep = HandSegm::DepthNode::getInstance();
-		
+	
 	HandSegm::ColorNode *col = HandSegm::ColorNode::getInstance();
+
+	HandSegm::DepthNode *dep = HandSegm::DepthNode::getInstance();
 	
 	/******************************************/
 
 	dep->setDepthNode(data);
 
 	saveExperiment(	dep->getVerticesFloatingPoint(), 
-					dep->getDepthMapFloatingPoint() ,
+					dep->getDepthMapFloatingPoint(),
 					col->getColorMap(), 
 					dep->getConfMap(), 
-					dep->getuvMap());
+					dep->getuvMap(),
+					dep->getRGBuvmap());
 
 	
 }
